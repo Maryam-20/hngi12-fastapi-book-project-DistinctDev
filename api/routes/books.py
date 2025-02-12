@@ -1,8 +1,7 @@
-from typing import OrderedDict
-
-from django.http import JsonResponse
-from fastapi import APIRouter, status, HTTPException
+from collections import OrderedDict
 from fastapi.responses import JSONResponse
+from fastapi import APIRouter, status, HTTPException
+
 
 from api.db.schemas import Book, Genre, InMemoryDB
 
@@ -37,10 +36,8 @@ db.books = {
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_book(book: Book):
     db.add_book(book)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED, content=book.model_dump()
-    )
-
+    return book
+    
 
 @router.get(
     "/", response_model=OrderedDict[int, Book], status_code=status.HTTP_200_OK
@@ -56,15 +53,13 @@ async def get_book(book_id: int) -> Book:
         raise HTTPException(status_code=404, detail="Book not found")
     return book  
 
+
 @router.put("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK)
 async def update_book(book_id: int, book: Book) -> Book:
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=db.update_book(book_id, book).model_dump(),
-    )
+    return db.update_book(book_id, book)
+
 
 
 @router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_book(book_id: int) -> None:
     db.delete_book(book_id)
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
