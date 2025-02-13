@@ -16,7 +16,7 @@ jobs:
             username: ubuntu
             key: ${{ secrets.AWS_PRIVATE_KEY }}
             script: |
-                cd fastapi-app
+                cd /home/ubuntu/hngi12-fastapi-book-project-DistinctDev
                 git stash
                 git pull origin main
                 source venv/bin/activate
